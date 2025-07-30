@@ -78,6 +78,10 @@
                 text-align: end;
             }
 
+            #overlayCloseButton {
+                font-weight: bold;
+            }
+
             #labTypeInput {
                 grid-area: lbti;
                 display: flex;
@@ -507,7 +511,7 @@
                 <div class='header'>Labbing Assistant</div>
             </div>
             <div id='overlayCloseButtonDiv'>
-                <button class='btn btn-md' onclick='openCloseOverlay();'>🗙</button>
+                <button id='overlayCloseButton' class='btn btn-md' onclick='openCloseOverlay();'>X</button>
             </div>
             <div id='labTypeInput'>
                 <div id='singleVariationButtonDiv'>
