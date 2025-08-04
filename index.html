@@ -100,6 +100,7 @@
             }
 
             #moveList  {
+                position: relative;
                 grid-area: movl;
                 background-color: rgb(190,190,190);
                 max-height: 80vh;
@@ -107,10 +108,23 @@
             }
 
             #modifierList  {
+                position: relative;
                 grid-area: modl;
                 background-color: rgb(190,190,190);
                 max-height: 80vh;
                 overflow-y: scroll;
+            }
+
+            .deactivateOverlay {
+                position: absolute;
+                top: 0;
+                bottom: 0;
+                left: 0;
+                right: 0;
+                width: 100%;
+                height: 100%;
+                background-color: rgba(125,125,125,0.5);
+                z-index: 10;
             }
 
             .header {
@@ -177,6 +191,11 @@
                     'handstand',
                     'bridge',
                 ],
+                'Groundwork': [
+                    'back cc',
+                    'belly sweep',
+                    'back stepover',
+                ],
                 'Powermoves': [
                     'windmill',
                     'swipe',
@@ -218,12 +237,13 @@
                 'circle',
                 'extend / retract',
                 'grab',
+                'hook',
                 'jump',
                 'knee',
-                'hook',
                 'slide',
                 'spin / pivot',
                 'stab',
+                'subtract',
                 'sweep / blender',
                 'thread',
                 'repeat',
@@ -240,16 +260,6 @@
                     '',
                 ],
             }
-
-            // div group
-            //     div groupheader
-            //         div grouplabel footwork
-            //         div buttoncontainer
-            //             button
-            //     div form-check
-            //         input
-            //         label
-            // div group
 
             function expandCollapseMoveGroup(button, moveGroupDiv) {
                 var formChecks = moveGroupDiv.querySelectorAll('.form-check');
@@ -373,20 +383,33 @@
                 document.getElementById('modifierList').appendChild(formCheckDiv);
             }
 
-            function changeType(input) {
-                if (input.checked == false) {
-                    input.checked = true;
-                    return;
-                }
-                else if (input.checked == true) {
-                    if (input.id == 'singleVariationButton') {
-                        document.getElementById('transitionVariationButton').checked = false;
-                        type = 'single';
-                    }
-                    else if (input.id == 'transitionVariationButton') {
-                        document.getElementById('singleVariationButton').checked = false;
-                        type = 'transition';
-                    }
+            function changeMode(mode) {
+                document.getElementById('modeDropDown').innerText = mode.innerText;
+                var moveListOverlay = document.getElementById('deactivateOverlayMoveList');
+                var modifierListOverlay = document.getElementById('deactivateOverlayModifierList');
+                switch (mode.innerText) {
+                    case 'Move':
+                        moveListOverlay.style.display = 'none';
+                        modifierListOverlay.style.display = 'block';
+                        break;
+                    case 'Variation':
+                        moveListOverlay.style.display = 'block';
+                        modifierListOverlay.style.display = 'none';
+                        break;
+                    case 'Transition':
+                        moveListOverlay.style.display = 'none';
+                        modifierListOverlay.style.display = 'none';
+                        break;
+                    case 'Move Variation':
+                        moveListOverlay.style.display = 'none';
+                        modifierListOverlay.style.display = 'none';
+                        break;
+                    case 'Transition Variation':
+                        moveListOverlay.style.display = 'none';
+                        modifierListOverlay.style.display = 'none';
+                        break;
+                    default:
+                        break;
                 }
             }
 
@@ -441,12 +464,14 @@
                 var modifierList = document.getElementById('modifierList').querySelectorAll('label, input[type="text"]');
                 for (var i = 0; i < modifierList.length; i++) {
                     if (modifierList[i].tagName == 'LABEL') {
-                        // if checkbox is checked
-                        modifiers[i] = modifierList[i].innerText;
+                        if (modifierList[i].previousSibling.checked) {
+                            modifiers[i] = modifierList[i].innerText;
+                        }
                     }
                     if (modifierList[i].tagName == 'INPUT') {
-                        // if checkbox is checked
-                        modifiers[i] = modifierList[i].value;
+                        if (modifierList[i].previousSibling.checked) {
+                            modifiers[i] = modifierList[i].value;
+                        }
                     }
                 }
                 console.log(modifiers);
@@ -468,16 +493,42 @@
             function randomize(location) {
                 updateList();
 
-                if (location == 'overlay') openCloseOverlay();
+                if (location == 'overlay') {
+                    openCloseOverlay();
+                }
                 
-                switch(type) {
-                    case 'single':
-                        document.getElementById('labType').innerText = 'single variation';
+                var mode = document.getElementById('modeDropDown').innerText;
+                switch(mode) {
+                    case 'Mode': // run standalone move by default
+                    case 'Move':
+                        document.getElementById('labType').innerText = 'move';
+                        document.getElementById('moveOneText').innerText = moves[Math.floor(Math.random() * moves.length)];
+                        document.getElementById('modifierText').innerText = '';
+                        document.getElementById('moveTwoText').innerText = '';
+                        break;
+                    case 'Variation':
+                        document.getElementById('labType').innerText = 'variation';
+                        document.getElementById('moveOneText').innerText = '';
+                        document.getElementById('modifierText').innerText = modifiers[Math.floor(Math.random() * modifiers.length)];
+                        document.getElementById('moveTwoText').innerText = '';
+                        break;
+                    case 'Transition':
+                        document.getElementById('labType').innerText = 'transition';
+                        document.getElementById('moveOneText').innerText = moves[Math.floor(Math.random() * moves.length)];
+                        document.getElementById('modifierText').innerText = '';
+                        document.getElementById('moveTwoText').innerText = moves[Math.floor(Math.random() * moves.length)];
+                        while (document.getElementById('moveOneText').innerText == document.getElementById('moveTwoText').innerText) {
+                            document.getElementById('moveTwoText').innerText = moves[Math.floor(Math.random() * moves.length)];
+                        }
+                        break;
+                        break;
+                    case 'Move Variation':
+                        document.getElementById('labType').innerText = 'move variation';
                         document.getElementById('moveOneText').innerText = moves[Math.floor(Math.random() * moves.length)];
                         document.getElementById('modifierText').innerText = modifiers[Math.floor(Math.random() * modifiers.length)];
                         document.getElementById('moveTwoText').innerText = '';
                         break;
-                    case 'transition':
+                    case 'Transition Variation':
                         document.getElementById('labType').innerText = 'transition variation';
                         document.getElementById('moveOneText').innerText = moves[Math.floor(Math.random() * moves.length)];
                         document.getElementById('modifierText').innerText = modifiers[Math.floor(Math.random() * modifiers.length)];
@@ -485,6 +536,8 @@
                         while (document.getElementById('moveOneText').innerText == document.getElementById('moveTwoText').innerText) {
                             document.getElementById('moveTwoText').innerText = moves[Math.floor(Math.random() * moves.length)];
                         }
+                        break;
+                    default:
                         break;
                 }
             }
@@ -514,19 +567,24 @@
                 <button id='overlayCloseButton' class='btn btn-md' onclick='openCloseOverlay();'>X</button>
             </div>
             <div id='labTypeInput'>
-                <div id='singleVariationButtonDiv'>
-                    <input type="checkbox" class="btn-check" id="singleVariationButton" checked autocomplete="off" onchange='changeType(this);'>
-                    <label class="btn" for="singleVariationButton">Single Variation</label>
-                </div>
-                <div id='transitionVariationButtonDiv'>
-                    <input type="checkbox" class="btn-check" id="transitionVariationButton" autocomplete="off" onchange='changeType(this);'>
-                    <label class="btn" for="transitionVariationButton">Transition Variation</label>
+                <div class="dropdown">
+                    <button class="btn dropdown-toggle" type="button" id="modeDropDown" data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false">Mode</button>
+                    <div class="dropdown-menu" aria-labelledby="modeDropDown">
+                        <a class="dropdown-item" onclick='changeMode(this);'>Move</a>
+                        <a class="dropdown-item" onclick='changeMode(this);'>Variation</a>
+                        <a class="dropdown-item" onclick='changeMode(this);'>Transition</a>
+                        <div class="dropdown-divider"></div>
+                        <a class="dropdown-item" onclick='changeMode(this);'>Move Variation</a>
+                        <a class="dropdown-item" onclick='changeMode(this);'>Transition Variation</a>
+                    </div>
                 </div>
             </div>
             <div id='moveList' class='rounded m-2 p-2'>
+                <div id='deactivateOverlayMoveList' class='deactivateOverlay' style='display: none;'></div>
                 <div class='header'>Moves</div>
             </div>
             <div id='modifierList' class='rounded m-2 p-2'>
+                <div id='deactivateOverlayModifierList' class='deactivateOverlay' style='display: none;'></div>
                 <div class='header'>Modifiers</div>
             </div>
             <div id='overlayRandomizeButtonDiv'>
