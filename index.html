@@ -104,6 +104,10 @@
                 grid-area: abtd;
             }
             
+            #aboutButton {
+                font-weight: bold;
+            }
+            
             #overlayTitle {
                 grid-area: ottl;
                 display: flex;
@@ -442,7 +446,7 @@
                         moveListOverlay.style.display = 'block';
                         modifierListOverlay.style.display = 'none';
                         break;
-                    case 'Transition':
+                    case 'Combination':
                         moveListOverlay.style.display = 'none';
                         modifierListOverlay.style.display = 'none';
                         break;
@@ -450,7 +454,7 @@
                         moveListOverlay.style.display = 'none';
                         modifierListOverlay.style.display = 'none';
                         break;
-                    case 'Transition Variation':
+                    case 'Combination Variation':
                         moveListOverlay.style.display = 'none';
                         modifierListOverlay.style.display = 'none';
                         break;
@@ -577,8 +581,8 @@
                         document.getElementById('modifierText').innerText = modifiers[Math.floor(Math.random() * modifiers.length)];
                         document.getElementById('moveTwoText').innerText = '';
                         break;
-                    case 'Transition':
-                        document.getElementById('labType').innerText = 'transition';
+                    case 'Combination':
+                        document.getElementById('labType').innerText = 'combination';
                         document.getElementById('moveOneText').innerText = moves[Math.floor(Math.random() * moves.length)];
                         document.getElementById('modifierText').innerText = '';
                         document.getElementById('moveTwoText').innerText = moves[Math.floor(Math.random() * moves.length)];
@@ -586,8 +590,8 @@
                             document.getElementById('moveTwoText').innerText = moves[Math.floor(Math.random() * moves.length)];
                         }
                         break;
-                    case 'Transition Variation':
-                        document.getElementById('labType').innerText = 'transition variation';
+                    case 'Combination Variation':
+                        document.getElementById('labType').innerText = 'combination variation';
                         document.getElementById('moveOneText').innerText = moves[Math.floor(Math.random() * moves.length)];
                         document.getElementById('modifierText').innerText = modifiers[Math.floor(Math.random() * modifiers.length)];
                         document.getElementById('moveTwoText').innerText = moves[Math.floor(Math.random() * moves.length)];
@@ -625,23 +629,23 @@
                 </div>
                 <div id='aboutText'>
                     <p>This is a tool for labbing and practice.</p>
-                    <p>In the config, the left column contains a list of moves and the right column contains a list of modifiers. The tool selects from these lists to provide prompts for brainstorming or direction for drilling. Use the '<b>+</b>' button at the bottom of each list to add custom moves or modifiers.</p>
+                    <p>In the config, the left column contains a list of moves and the right column contains a list of modifiers. The tool selects from these lists to provide prompts for brainstorming variations or drilling moves. Use the '<b>+</b>' button at the bottom of each list to add custom moves or modifiers.</p>
                     <p>Use the '<b>Mode</b>' dropdown to choose what the tool will return:
                         <br><u>Move</u>: a single move
                         <br><u>Variation</u>: a single modifier
-                        <br><u>Transition</u>: a move to another move
+                        <br><u>Combination</u>: a move to another move
                         <br><u>Move Variation</u>: a move with a modifier
-                        <br><u>Transition Variation</u>: a move to another move with a modifier
+                        <br><u>Combination Variation</u>: a move to another move with a modifier
                     </p>
                     <p>Use the checkboxes to include or exclude moves and modifiers from the selection. Use '<b>v</b>' or '<b>^</b>' to expand or collapse move sections.</p>
                     <p>After configuring, use '➜' at the bottom to run the randomizer. To randomize again, use '<b>⟳</b>' at the bottom. To change config, use '<b>⛭</b>' in the top right.</p>
                     <p>To close this about panel and go to the config panel, use the '<b>X</b>' in the top right.</p>
-                    <p>To reopen this about panel, on the config panel use the '🛈' in the top left.</p>
+                    <p>To reopen this about panel, on the config panel use the '<b>(i)</b>' in the top left.</p>
                 </div>
             </div>
             <div id='config'>
                 <div id='aboutButtonDiv'>
-                    <button id='aboutButton' class='btn btn-md' onclick='openCloseAbout();'>🛈</button>
+                    <button id='aboutButton' class='btn btn-md' onclick='openCloseAbout();'>(i)</button>
                 </div>
                 <div id='overlayTitle'>
                     <div class='header'>Config</div>
@@ -655,10 +659,10 @@
                         <div class="dropdown-menu" aria-labelledby="modeDropDown">
                             <a class="dropdown-item" onclick='changeMode(this);'>Move</a>
                             <a class="dropdown-item" onclick='changeMode(this);'>Variation</a>
-                            <a class="dropdown-item" onclick='changeMode(this);'>Transition</a>
+                            <a class="dropdown-item" onclick='changeMode(this);'>Combination</a>
                             <div class="dropdown-divider"></div>
                             <a class="dropdown-item" onclick='changeMode(this);'>Move Variation</a>
-                            <a class="dropdown-item" onclick='changeMode(this);'>Transition Variation</a>
+                            <a class="dropdown-item" onclick='changeMode(this);'>Combination Variation</a>
                         </div>
                     </div>
                 </div>
