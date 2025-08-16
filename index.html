@@ -53,19 +53,57 @@
             #overlay {
                 height: 85vh;
                 background-color: rgb(225,225,225);
+            }
+
+            #about {
                 display: grid;
                 grid-template-columns: 1fr 1fr 1fr 1fr 1fr 1fr;
                 grid-template-areas:
-                    'ospc ottl ottl ottl ottl clsb'
+                    'aspc abth abth abth abth clsb'
+                    'abtx abtx abtx abtx abtx abtx';
+            }
+            
+            #aboutHeaderSpacer {
+                grid-area: aspc;
+            }
+            
+            #aboutHeader {
+                grid-area: abth;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+            }
+            
+            #closeAboutButtonDiv {
+                grid-area: clsb;
+                text-align: end;
+            }
+            
+            #closeAboutButton {
+                font-weight: bold;
+            }
+            
+            #aboutText {
+                grid-area: abtx;
+                padding: 0 5vw;
+                height: 78vh;
+                overflow-y: scroll;
+            }
+            
+            #config {
+                display: none;
+                grid-template-columns: 1fr 1fr 1fr 1fr 1fr 1fr;
+                grid-template-areas:
+                    'abtd ottl ottl ottl ottl clsb'
                     'lbti lbti lbti lbti lbti lbti'
                     'movl movl movl modl modl modl'
                     'rndb rndb rndb rndb rndb rndb';
             }
-
-            #overlaySpacerDiv {
-                grid-area: ospc;
+            
+            #aboutButtonDiv {
+                grid-area: abtd;
             }
-
+            
             #overlayTitle {
                 grid-area: ottl;
                 display: flex;
@@ -79,6 +117,7 @@
             }
 
             #overlayCloseButton {
+                display: none;
                 font-weight: bold;
             }
 
@@ -103,7 +142,7 @@
                 position: relative;
                 grid-area: movl;
                 background-color: rgb(190,190,190);
-                max-height: 80vh;
+                max-height: 65vh;
                 overflow-y: scroll;
             }
 
@@ -111,7 +150,7 @@
                 position: relative;
                 grid-area: modl;
                 background-color: rgb(190,190,190);
-                max-height: 80vh;
+                max-height: 65vh;
                 overflow-y: scroll;
             }
 
@@ -348,7 +387,14 @@
                     }
                     document.getElementById('moveList').appendChild(moveGroupDiv);
                 }
-
+                
+                var expandButtons = document.getElementsByClassName('expandButton');
+                var groupHeaders = document.getElementsByClassName('groupHeaderDiv');
+                for (var i = 1; i < expandButtons.length; i++) {
+                    expandButtons[i].click();
+                    groupHeaders[i].getElementsByClassName('form-check-input')[0].click();
+                }
+                
                 formCheckDiv = document.createElement('div');
                 formCheckInput = document.createElement('button');
                 formCheckInput.setAttribute('class', 'addOptionButton btn btn-sm btn-secondary');
@@ -477,6 +523,19 @@
                 console.log(modifiers);
             }
 
+            function openCloseAbout() {
+                var about = document.getElementById('about');
+                var config = document.getElementById('config');
+                if (about.style.display != 'none') {
+                    about.style.display = 'none';
+                    config.style.display = 'grid';
+                }
+                else {
+                    about.style.display = 'grid';
+                    config.style.display = 'none';
+                }
+            }
+            
             function openCloseOverlay() {
                 var overlay = document.getElementById('overlay');
                 var display = document.getElementById('display');
@@ -499,7 +558,13 @@
                 
                 var mode = document.getElementById('modeDropDown').innerText;
                 switch(mode) {
-                    case 'Mode': // run standalone move by default
+                    case 'Mode': // default to Move Variation
+                    case 'Move Variation':
+                        document.getElementById('labType').innerText = 'move variation';
+                        document.getElementById('moveOneText').innerText = moves[Math.floor(Math.random() * moves.length)];
+                        document.getElementById('modifierText').innerText = modifiers[Math.floor(Math.random() * modifiers.length)];
+                        document.getElementById('moveTwoText').innerText = '';
+                        break;
                     case 'Move':
                         document.getElementById('labType').innerText = 'move';
                         document.getElementById('moveOneText').innerText = moves[Math.floor(Math.random() * moves.length)];
@@ -520,13 +585,6 @@
                         while (document.getElementById('moveOneText').innerText == document.getElementById('moveTwoText').innerText) {
                             document.getElementById('moveTwoText').innerText = moves[Math.floor(Math.random() * moves.length)];
                         }
-                        break;
-                        break;
-                    case 'Move Variation':
-                        document.getElementById('labType').innerText = 'move variation';
-                        document.getElementById('moveOneText').innerText = moves[Math.floor(Math.random() * moves.length)];
-                        document.getElementById('modifierText').innerText = modifiers[Math.floor(Math.random() * modifiers.length)];
-                        document.getElementById('moveTwoText').innerText = '';
                         break;
                     case 'Transition Variation':
                         document.getElementById('labType').innerText = 'transition variation';
@@ -559,37 +617,62 @@
         </div>
 
         <div id='overlay' class='border border-secondary rounded shadow'>
-            <div id='overlaySpacerDiv'></div>
-            <div id='overlayTitle'>
-                <div class='header'>Labbing Assistant</div>
-            </div>
-            <div id='overlayCloseButtonDiv'>
-                <button id='overlayCloseButton' class='btn btn-md' onclick='openCloseOverlay();'>X</button>
-            </div>
-            <div id='labTypeInput'>
-                <div class="dropdown">
-                    <button class="btn dropdown-toggle" type="button" id="modeDropDown" data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false">Mode</button>
-                    <div class="dropdown-menu" aria-labelledby="modeDropDown">
-                        <a class="dropdown-item" onclick='changeMode(this);'>Move</a>
-                        <a class="dropdown-item" onclick='changeMode(this);'>Variation</a>
-                        <a class="dropdown-item" onclick='changeMode(this);'>Transition</a>
-                        <div class="dropdown-divider"></div>
-                        <a class="dropdown-item" onclick='changeMode(this);'>Move Variation</a>
-                        <a class="dropdown-item" onclick='changeMode(this);'>Transition Variation</a>
-                    </div>
+            <div id='about'>
+                <div id='aboutHeaderSpacer'></div>
+                <div id='aboutHeader' class='header'>About This Tool</div>
+                <div id='closeAboutButtonDiv'>
+                    <button id='closeAboutButton' class='btn btn-md' onclick='openCloseAbout();'>X</button>
+                </div>
+                <div id='aboutText'>
+                    <p>This is a tool for labbing and practice.</p>
+                    <p>In the config, the left column contains a list of moves and the right column contains a list of modifiers. The tool selects from these lists to provide prompts for brainstorming or direction for drilling. Use the '<b>+</b>' button at the bottom of each list to add custom moves or modifiers.</p>
+                    <p>Use the '<b>Mode</b>' dropdown to choose what the tool will return:
+                        <br><u>Move</u>: a single move
+                        <br><u>Variation</u>: a single modifier
+                        <br><u>Transition</u>: a move to another move
+                        <br><u>Move Variation</u>: a move with a modifier
+                        <br><u>Transition Variation</u>: a move to another move with a modifier
+                    </p>
+                    <p>Use the checkboxes to include or exclude moves and modifiers from the selection. Use '<b>v</b>' or '<b>^</b>' to expand or collapse move sections.</p>
+                    <p>After configuring, use '➜' at the bottom to run the randomizer. To randomize again, use '<b>⟳</b>' at the bottom. To change config, use '<b>⛭</b>' in the top right.</p>
+                    <p>To close this about panel and go to the config panel, use the '<b>X</b>' in the top right.</p>
+                    <p>To reopen this about panel, on the config panel use the '🛈' in the top left.</p>
                 </div>
             </div>
-            <div id='moveList' class='rounded m-2 p-2'>
-                <div id='deactivateOverlayMoveList' class='deactivateOverlay' style='display: none;'></div>
-                <div class='header'>Moves</div>
-            </div>
-            <div id='modifierList' class='rounded m-2 p-2'>
-                <div id='deactivateOverlayModifierList' class='deactivateOverlay' style='display: none;'></div>
-                <div class='header'>Modifiers</div>
-            </div>
-            <div id='overlayRandomizeButtonDiv'>
-                <button class='btn btn-md btn-primary shadow m-2' onclick='randomize("overlay");'>➜</button>
-            </div>
+            <div id='config'>
+                <div id='aboutButtonDiv'>
+                    <button id='aboutButton' class='btn btn-md' onclick='openCloseAbout();'>🛈</button>
+                </div>
+                <div id='overlayTitle'>
+                    <div class='header'>Config</div>
+                </div>
+                <div id='overlayCloseButtonDiv'>
+                    <button id='overlayCloseButton' class='btn btn-md' onclick='openCloseOverlay();'>X</button>
+                </div>
+                <div id='labTypeInput'>
+                    <div class="dropdown">
+                        <button class="btn dropdown-toggle" type="button" id="modeDropDown" data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false">Mode</button>
+                        <div class="dropdown-menu" aria-labelledby="modeDropDown">
+                            <a class="dropdown-item" onclick='changeMode(this);'>Move</a>
+                            <a class="dropdown-item" onclick='changeMode(this);'>Variation</a>
+                            <a class="dropdown-item" onclick='changeMode(this);'>Transition</a>
+                            <div class="dropdown-divider"></div>
+                            <a class="dropdown-item" onclick='changeMode(this);'>Move Variation</a>
+                            <a class="dropdown-item" onclick='changeMode(this);'>Transition Variation</a>
+                        </div>
+                    </div>
+                </div>
+                <div id='moveList' class='rounded m-2 p-2'>
+                    <div id='deactivateOverlayMoveList' class='deactivateOverlay' style='display: none;'></div>
+                    <div class='header'>Moves</div>
+                </div>
+                <div id='modifierList' class='rounded m-2 p-2'>
+                    <div id='deactivateOverlayModifierList' class='deactivateOverlay' style='display: none;'></div>
+                    <div class='header'>Modifiers</div>
+                </div>
+                <div id='overlayRandomizeButtonDiv'>
+                    <button class='btn btn-md btn-primary shadow m-2' onclick='randomize("overlay");'>➜</button>
+                </div>
             </div>
         </div>
     </body>
