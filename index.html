@@ -524,6 +524,7 @@
                         }
                     }
                 }
+                modifiers = modifiers.filter(e => e);
                 console.log(modifiers);
             }
 
@@ -555,7 +556,7 @@
 
             function randomize(location) {
                 updateList();
-
+                
                 if (location == 'overlay') {
                     openCloseOverlay();
                 }
