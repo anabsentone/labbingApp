@@ -34,18 +34,19 @@
                 height: 10vh;
             }
 
-            #moveOneText {
+            #moveOneDiv, #modifierDiv, #moveTwoDiv {
                 height: 18vh;
             }
-
-            #modifierText {
-                height: 18vh;
+            
+            #moveOneLockButtonDiv, #modifierLockButtonDiv, #moveTwoLockButtonDiv {
+                text-align: center;
             }
 
-            #moveTwoText {
-                height: 18vh;
+            img {
+                height: 100%;
+                width: 100%;
             }
-
+            
             #randomizeButtonDiv {
                 text-align: center;
             }
@@ -449,7 +450,7 @@
                         break;
                     case 'Combination':
                         moveListOverlay.style.display = 'none';
-                        modifierListOverlay.style.display = 'none';
+                        modifierListOverlay.style.display = 'block';
                         break;
                     case 'Move Variation':
                         moveListOverlay.style.display = 'none';
@@ -493,40 +494,44 @@
                 // updateList();
             }
 
-            function updateList() {
-                moves = [];
-                var moveList = document.getElementById('moveList').querySelectorAll('label, input[type="text"]');
-                for (var i = 0; i < moveList.length; i++) {
-                    if (moveList[i].tagName == 'LABEL') {
-                        if (moveList[i].previousSibling.checked) {
-                            moves[i] = moveList[i].innerText;
+            function updateList(which) {
+                if ((which == 'both') || (which == 'moves')) {
+                    moves = [];
+                    var moveList = document.getElementById('moveList').querySelectorAll('label, input[type="text"]');
+                    for (var i = 0; i < moveList.length; i++) {
+                        if (moveList[i].tagName == 'LABEL') {
+                            if (moveList[i].previousSibling.checked) {
+                                moves[i] = moveList[i].innerText;
+                            }
+                        }
+                        if (moveList[i].tagName == 'INPUT') {
+                            if (moveList[i].previousSibling.checked) {
+                                moves[i] = moveList[i].value;
+                            }
                         }
                     }
-                    if (moveList[i].tagName == 'INPUT') {
-                        if (moveList[i].previousSibling.checked) {
-                            moves[i] = moveList[i].value;
-                        }
-                    }
+                    moves = moves.filter(e => e);
+                    console.log(moves);
                 }
-                moves = moves.filter(e => e);
-                console.log(moves);
 
-                modifiers = [];
-                var modifierList = document.getElementById('modifierList').querySelectorAll('label, input[type="text"]');
-                for (var i = 0; i < modifierList.length; i++) {
-                    if (modifierList[i].tagName == 'LABEL') {
-                        if (modifierList[i].previousSibling.checked) {
-                            modifiers[i] = modifierList[i].innerText;
+                if ((which == 'both') || (which == 'modifiers')) {
+                    modifiers = [];
+                    var modifierList = document.getElementById('modifierList').querySelectorAll('label, input[type="text"]');
+                    for (var i = 0; i < modifierList.length; i++) {
+                        if (modifierList[i].tagName == 'LABEL') {
+                            if (modifierList[i].previousSibling.checked) {
+                                modifiers[i] = modifierList[i].innerText;
+                            }
+                        }
+                        if (modifierList[i].tagName == 'INPUT') {
+                            if (modifierList[i].previousSibling.checked) {
+                                modifiers[i] = modifierList[i].value;
+                            }
                         }
                     }
-                    if (modifierList[i].tagName == 'INPUT') {
-                        if (modifierList[i].previousSibling.checked) {
-                            modifiers[i] = modifierList[i].value;
-                        }
-                    }
+                    modifiers = modifiers.filter(e => e);
+                    console.log(modifiers);
                 }
-                modifiers = modifiers.filter(e => e);
-                console.log(modifiers);
             }
 
             function openCloseAbout() {
@@ -556,52 +561,158 @@
             }
 
             function randomize(location) {
-                updateList();
-                
                 if (location == 'overlay') {
                     openCloseOverlay();
+                    updateList('both');
+                    moveOneUnlocked = true;
+                    document.getElementById('moveOneLockButton').children[0].children[0].src = 'unlocked.png';
+                    modifierUnlocked = true;
+                    document.getElementById('modifierLockButton').children[0].children[0].src = 'unlocked.png';
+                    moveTwoUnlocked = true;
+                    document.getElementById('moveTwoLockButton').children[0].children[0].src = 'unlocked.png';
                 }
                 
                 var mode = document.getElementById('modeDropDown').innerText;
+                var moveOneLockButtonDiv = document.getElementById('moveOneLockButtonDiv');
+                var modifierLockButtonDiv = document.getElementById('modifierLockButtonDiv');
+                var moveTwoLockButtonDiv = document.getElementById('moveTwoLockButtonDiv');
                 switch(mode) {
                     case 'Mode': // default to Move Variation
                     case 'Move Variation':
                         document.getElementById('labType').innerText = 'move variation';
-                        document.getElementById('moveOneText').innerText = moves[Math.floor(Math.random() * moves.length)];
-                        document.getElementById('modifierText').innerText = modifiers[Math.floor(Math.random() * modifiers.length)];
+                        if (moveOneUnlocked) { document.getElementById('moveOneText').innerText = moves[Math.floor(Math.random() * moves.length)]; }
+                        if (modifierUnlocked) { document.getElementById('modifierText').innerText = modifiers[Math.floor(Math.random() * modifiers.length)]; }
                         document.getElementById('moveTwoText').innerText = '';
+                        removeItem();
+                        moveOneLockButtonDiv.style.display = 'block';
+                        modifierLockButtonDiv.style.display = 'block';
+                        moveTwoLockButtonDiv.style.display = 'none';
                         break;
                     case 'Move':
                         document.getElementById('labType').innerText = 'move';
                         document.getElementById('moveOneText').innerText = moves[Math.floor(Math.random() * moves.length)];
                         document.getElementById('modifierText').innerText = '';
                         document.getElementById('moveTwoText').innerText = '';
+                        removeItem();
+                        moveOneLockButtonDiv.style.display = 'none';
+                        modifierLockButtonDiv.style.display = 'none';
+                        moveTwoLockButtonDiv.style.display = 'none';
                         break;
                     case 'Variation':
                         document.getElementById('labType').innerText = 'variation';
                         document.getElementById('moveOneText').innerText = '';
                         document.getElementById('modifierText').innerText = modifiers[Math.floor(Math.random() * modifiers.length)];
                         document.getElementById('moveTwoText').innerText = '';
+                        removeItem();
+                        moveOneLockButtonDiv.style.display = 'none';
+                        modifierLockButtonDiv.style.display = 'none';
+                        moveTwoLockButtonDiv.style.display = 'none';
                         break;
                     case 'Combination':
                         document.getElementById('labType').innerText = 'combination';
-                        document.getElementById('moveOneText').innerText = moves[Math.floor(Math.random() * moves.length)];
+                        if (moveOneUnlocked) { document.getElementById('moveOneText').innerText = moves[Math.floor(Math.random() * moves.length)]; }
                         document.getElementById('modifierText').innerText = '';
-                        document.getElementById('moveTwoText').innerText = moves[Math.floor(Math.random() * moves.length)];
-                        while (document.getElementById('moveOneText').innerText == document.getElementById('moveTwoText').innerText) {
+                        if (moveTwoUnlocked) {
                             document.getElementById('moveTwoText').innerText = moves[Math.floor(Math.random() * moves.length)];
+                            while (document.getElementById('moveOneText').innerText == document.getElementById('moveTwoText').innerText) {
+                                document.getElementById('moveTwoText').innerText = moves[Math.floor(Math.random() * moves.length)];
+                            }
                         }
+                        removeItem('combination');
+                        moveOneLockButtonDiv.style.display = 'block';
+                        modifierLockButtonDiv.style.display = 'none';
+                        moveTwoLockButtonDiv.style.display = 'block';
                         break;
                     case 'Combination Variation':
                         document.getElementById('labType').innerText = 'combination variation';
-                        document.getElementById('moveOneText').innerText = moves[Math.floor(Math.random() * moves.length)];
-                        document.getElementById('modifierText').innerText = modifiers[Math.floor(Math.random() * modifiers.length)];
-                        document.getElementById('moveTwoText').innerText = moves[Math.floor(Math.random() * moves.length)];
-                        while (document.getElementById('moveOneText').innerText == document.getElementById('moveTwoText').innerText) {
+                        if (moveOneUnlocked) { document.getElementById('moveOneText').innerText = moves[Math.floor(Math.random() * moves.length)]; }
+                        if (modifierUnlocked) { document.getElementById('modifierText').innerText = modifiers[Math.floor(Math.random() * modifiers.length)]; }
+                        if (moveTwoUnlocked) {
                             document.getElementById('moveTwoText').innerText = moves[Math.floor(Math.random() * moves.length)];
+                            while (document.getElementById('moveOneText').innerText == document.getElementById('moveTwoText').innerText) {
+                                document.getElementById('moveTwoText').innerText = moves[Math.floor(Math.random() * moves.length)];
+                            }
                         }
+                        removeItem('combination');
+                        moveOneLockButtonDiv.style.display = 'block';
+                        modifierLockButtonDiv.style.display = 'block';
+                        moveTwoLockButtonDiv.style.display = 'block';
                         break;
                     default:
+                        break;
+                }
+            }
+            
+            // instead of pure random, ensure each item on list appears before cycling through list again
+            function removeItem(type) {
+                var indexMoveOne = moves.indexOf(document.getElementById('moveOneText').innerText);
+                if (indexMoveOne > -1) {
+                    moves.splice(indexMoveOne, 1);
+                }
+                
+                var indexModifier = modifiers.indexOf(document.getElementById('modifierText').innerText);
+                if (indexModifier > -1) {
+                    modifiers.splice(indexModifier, 1);
+                }
+                
+                var indexMoveTwo = moves.indexOf(document.getElementById('moveTwoText').innerText);
+                if (indexMoveTwo > -1) {
+                    moves.splice(indexMoveTwo, 1);
+                }
+                
+                if (type == 'combination') {
+                    if (moves.length <= 1) {
+                        updateList('moves');
+                    }
+                }
+                else {
+                    if (moves.length == 0) {
+                        updateList('moves');
+                    }
+                }
+                if (modifiers.length == 0) {
+                    updateList('modifiers');
+                }
+            }
+            
+            var moveOneUnlocked = true;
+            var modifierUnlocked = true;
+            var moveTwoUnlocked = true;
+            function lockUnlock(which) {
+                var moveOneLockButton = document.getElementById('moveOneLockButton');
+                var modifierLockButton = document.getElementById('modifierLockButton');
+                var moveTwoLockButton = document.getElementById('moveTwoLockButton');
+                
+                switch(which) {
+                    case 'moveOne':
+                        if (moveOneUnlocked) {
+                            moveOneUnlocked = false;
+                            moveOneLockButton.children[0].children[0].src = 'locked.png';
+                        }
+                        else {
+                            moveOneUnlocked = true;
+                            moveOneLockButton.children[0].children[0].src = 'unlocked.png';
+                        }
+                        break;
+                    case 'modifier':
+                        if (modifierUnlocked) {
+                            modifierUnlocked = false;
+                            modifierLockButton.children[0].children[0].src = 'locked.png';
+                        }
+                        else {
+                            modifierUnlocked = true;
+                            modifierLockButton.children[0].children[0].src = 'unlocked.png';
+                        }
+                        break;
+                    case 'moveTwo':
+                        if (moveTwoUnlocked) {
+                            moveTwoUnlocked = false;
+                            moveTwoLockButton.children[0].children[0].src = 'locked.png';
+                        }
+                        else {
+                            moveTwoUnlocked = true;
+                            moveTwoLockButton.children[0].children[0].src = 'unlocked.png';
+                        }
                         break;
                 }
             }
@@ -614,9 +725,37 @@
                 <button class='btn btn-md btn-secondary shadow' onclick='openCloseOverlay();'>⛭</button>
             </div>
             <div id='labType' class='text-center'>single variation</div>
-            <div id='moveOneText' class='text-center'>coffee grinder</div>
-            <div id='modifierText' class='text-center'>spin</div>
-            <div id='moveTwoText' class='text-center'></div>
+            <div id='moveOneDiv'>
+                <div id='moveOneText' class='text-center'>coffee grinder</div>
+                <div id='moveOneLockButtonDiv'>
+                    <button id='moveOneLockButton' class='btn btn-sm' onclick='lockUnlock("moveOne");'>
+                        <div style='max-height: 5vh; max-width: 5vw; object-fit: contain;'><img src='unlocked.png'></div>
+                    </button>
+                    <!-- <svg width='7vw' height='auto' viewBox='0 0 80 100'> -->
+                        <!-- <circle cx='40' cy='30' r='20' stroke='gray' stroke-width='15' /> -->
+                        <!-- <circle cx='40' cy='30' r='15' fill='rgb(200,200,200)' /> -->
+                        <!-- <rect y='30' width='80' height='10' fill='rgb(200,200,200)' /> -->
+                        <!-- <rect x='15' y='30' width='15' height='10' fill='gray' /> -->
+                        <!-- <rect y='40' width='80' height='50' rx='15' ry='15' fill='gray' /> -->
+                    <!-- </svg> -->
+                </div>
+            </div>
+            <div id='modifierDiv'>
+                <div id='modifierText' class='text-center'>spin</div>
+                <div id='modifierLockButtonDiv'>
+                    <button id='modifierLockButton' class='btn btn-sm' onclick='lockUnlock("modifier");'>
+                        <div style='max-height: 5vh; max-width: 5vw; object-fit: contain;'><img src='unlocked.png'></div>
+                    </button>
+                </div>
+            </div>
+            <div id='moveTwoDiv'>
+                <div id='moveTwoText' class='text-center'></div>
+                <div id='moveTwoLockButtonDiv'>
+                    <button id='moveTwoLockButton' class='btn btn-sm' onclick='lockUnlock("moveTwo");'>
+                        <div style='max-height: 5vh; max-width: 5vw; object-fit: contain;'><img src='unlocked.png'></div>
+                    </button>
+                </div>
+            </div>
             <div id='randomizeButtonDiv'>
                 <button id='randomizeButton' class='btn btn-lg btn-primary shadow' onclick='randomize();'>⟳</button>
             </div>
@@ -643,6 +782,9 @@
                     <p>After configuring, use '➜' at the bottom to run the randomizer. To randomize again, use '<b>⟳</b>' at the bottom. To change config, use '<b>⛭</b>' in the top right.</p>
                     <p>To close this about panel and go to the config panel, use the '<b>X</b>' in the top right.</p>
                     <p>To reopen this about panel, on the config panel use the '<b>(i)</b>' in the top left.</p>
+                    <!-- attribution
+                    <a href="https://flaticon.com/authors/dave-gandy" title="lock icon creator link">Lock icons created by Dave Gandy - Flaticon</a>
+                    -->
                 </div>
             </div>
             <div id='config'>
